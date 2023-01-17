@@ -13,7 +13,7 @@ const Header = () => {
       <div className='flex items-center space-x-4'>
         <Sidebar />
 
-        <h1 className='text-2xl font-bold text-orange-500  hidden md:flex md:whitespace-nowrap'>Bell Fresh</h1>
+        <Link href="/" className='text-2xl font-bold text-orange-500  hidden md:flex md:whitespace-nowrap'>Bell Fresh</Link>
       </div>
 
       {/* middle */}

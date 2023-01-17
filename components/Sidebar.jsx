@@ -27,7 +27,7 @@ const Sidebar = () => {
           isOpen ? "translate-x-0" : "-translate-x-full"
         } fixed inset-0 left-0 z-20 w-[250px] transform overflow-y-auto bg-[#F9F8F5] duration-300 ease-in-out`}>
         <div className='flex items-center justify-between bg-[#F0E4A9] p-4'>
-         <img src="/images/logo.png" alt=""  className="h-14"/>
+          <img src='/images/logo.png' alt='' className='h-14' />
           <h1 className='text-xl font-bold text-orange-400'>Bell Fresh</h1>
           <button
             onClick={() => setIsOpen(!isOpen)}
@@ -47,13 +47,24 @@ const Sidebar = () => {
           </button>
         </div>
         <div className='space-y-5 px-4 py-2'>
-          <Link href='/' className='nav-items block px-2 py-1 font-medium text-gray-800'>
+          <Link
+            href='/create'
+            className='nav-items block px-2 py-1 font-medium text-gray-800'>
+            Create Item
+          </Link>
+          <Link
+            href='/'
+            className='nav-items block px-2 py-1 font-medium text-gray-800'>
             Home
           </Link>
-          <Link href='/about' className='nav-items block px-2 py-1 font-medium text-gray-800'>
+          <Link
+            href='/about'
+            className='nav-items block px-2 py-1 font-medium text-gray-800'>
             About
           </Link>
-          <Link href='/menu' className='nav-items block px-2 py-1 font-medium text-gray-800'>
+          <Link
+            href='/menu'
+            className='nav-items block px-2 py-1 font-medium text-gray-800'>
             Menu
           </Link>
         </div>

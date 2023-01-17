@@ -10,7 +10,6 @@ const Hero = () => {
         fill
               className='h-36 w-full rounded-3xl object-cover bg-white'
         alt='hero image'
-        priority
       />
 
       <div className='absolute flex items-center justify-between  p-3'>
