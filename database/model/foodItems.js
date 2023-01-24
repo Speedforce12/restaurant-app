@@ -1,5 +1,4 @@
-import mongoose from "mongoose";
-const { Schema, model, models } = mongoose;
+import  { Schema, model, models } from "mongoose";
 
 const menuSchema = new Schema(
   {
@@ -7,7 +6,7 @@ const menuSchema = new Schema(
     price: Number,
     categories: String,
     picture: String,
-    calories: Number,
+    description: String,
   },
   { timestamps: true }
 );

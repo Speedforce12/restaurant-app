@@ -31,7 +31,7 @@ export async function createMenu(req, res) {
 export async function deleteMenu(req, res) {
   try {
     const { menuId } = req.query;
-    if (employeeId) {
+    if (menuId) {
       const menu = await Menu.findByIdAndDelete(menuId);
       return res
         .status(200)

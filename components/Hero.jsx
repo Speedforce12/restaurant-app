@@ -7,7 +7,6 @@ const Hero = () => {
       <div className='absolute inset-0 rounded-3xl bg-gradient-to-r from-gray-800 to-black/50 opacity-80'></div>
       <img
         src='/images/heroBg.jpg'
-        fill
               className='h-36 w-full rounded-3xl object-cover bg-white'
         alt='hero image'
       />

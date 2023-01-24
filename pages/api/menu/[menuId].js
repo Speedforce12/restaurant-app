@@ -1,5 +1,5 @@
 import connectMongo from "../../../database/connection";
-import {deleteMenu, getMenu } from "../../../database/controller";
+import { createMenu, deleteMenu, getMenu } from "../../../database/controller";
 
 export default function handler(req, res) {
   connectMongo().catch(() =>
@@ -12,12 +12,15 @@ export default function handler(req, res) {
   switch (method) {
     case "GET":
       getMenu(req, res);
-          break;
-      
-      case "DELETE":
-          deleteMenu(req, res);
-          break;
-          
+      break;
+
+    case "DELETE":
+      deleteMenu(req, res);
+      break;
+
+    case "POST":
+      createMenu(req, res);
+      break;
 
     default:
       res.setHeader(

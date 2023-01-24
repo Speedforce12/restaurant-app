@@ -19,13 +19,15 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import Loader from "@/components/Loader";
 import { storage } from "@/firebase/firebase";
+import { useMutation, useQueryClient } from "react-query";
+import { createMenu } from "@/lib/helpers";
 
 const schema = yup
   .object({
     name: yup.string().required(),
     price: yup.number().positive().required(),
     categories: yup.string().required(),
-    calories: yup.number().positive(),
+    description: yup.string(),
   })
   .required();
 
@@ -33,10 +35,13 @@ const create = () => {
   const [progress, setProgress] = useState(0);
   const [imgUrl, setImgUrl] = useState(null);
   const [loading, setLoading] = useState(false);
+  const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
+    reset,
   } = useForm({
     resolver: yupResolver(schema),
   });
@@ -44,9 +49,9 @@ const create = () => {
   // upload images to firebase
   const uploadImage = (e) => {
     setLoading(true);
-    const file = e.target[0]?.files[0];
+    const file = e.target.files[0];
     if (!file) return;
-    const storageRef = ref(storage, `images/${file.name}`);
+    const storageRef = ref(storage, `Images/${file.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file);
 
     uploadTask.on(
@@ -93,7 +98,19 @@ const create = () => {
       });
   };
 
-  const onSubmit = (data) => console.log(data);
+  const addMenu = useMutation(createMenu, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("menus");
+    },
+  });
+
+  const onSubmit = (data) => {
+    addMenu.mutate(data);
+    reset();
+    setImgUrl(null);
+    toast.success("Menu Item Successfully Add");
+  };
+
   return (
     <div className='mx-auto my-auto flex  w-full max-w-4xl flex-col items-center justify-center p-3'>
       <h1 className='text-center text-3xl font-bold text-orange-600'>
@@ -132,34 +149,35 @@ const create = () => {
             <Loader />
           ) : (
             <>
-              {imgUrl ? (
-                <div className='relative h-full'>
-                  <img src={imgUrl} className='h-full  w-full object-cover' />
-
-                  <button
-                    type='button'
-                    className='absolute bottom-3 right-3 cursor-pointer rounded-full bg-red-500 p-3 text-xl outline-none transition-all  duration-500 ease-in-out hover:shadow-md'>
-                    <MdDelete className='text-white' />
-                  </button>
-                </div>
+              {!imgUrl ? (
+                <label className='flex h-full w-full cursor-pointer flex-col items-center justify-center'>
+                  <div className='flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg'>
+                    <MdCloudUpload className='text-3xl text-gray-500 hover:text-gray-700' />
+                    <p className='text-gray-500 hover:text-gray-700'>
+                      Click here to upload
+                    </p>
+                  </div>
+                  <input
+                    type='file'
+                    name='picture'
+                    accept='image/*'
+                    {...register("picture")}
+                    onChange={(e) => uploadImage(e)}
+                    className='h-0 w-0'
+                  />
+                </label>
               ) : (
                 <>
-                  <label className='flex h-full w-full cursor-pointer flex-col items-center justify-center'>
-                    <div className='flex h-full w-full flex-col items-center justify-center gap-2 rounded-lg'>
-                      <MdCloudUpload className='text-3xl text-gray-500 hover:text-gray-700' />
-                      <p className='text-gray-500 hover:text-gray-700'>
-                        Click here to upload
-                      </p>
-                    </div>
-                    <input
-                      type='file'
-                      name='picture'
-                      accept='image/*'
-                      onChange={uploadImage}
-                      {...register("picture")}
-                      className='h-0 w-0'
-                    />
-                  </label>
+                  <div className='relative h-full'>
+                    <img src={imgUrl} className='h-52  w-52 object-cover' />
+
+                    <button
+                      onClick={deleteImages}
+                      type='button'
+                      className='absolute bottom-3 right-3 cursor-pointer rounded-full bg-red-500 p-3 text-xl outline-none transition-all  duration-500 ease-in-out hover:shadow-md'>
+                      <MdDelete className='text-white' />
+                    </button>
+                  </div>
                 </>
               )}
             </>
@@ -178,17 +196,18 @@ const create = () => {
           <MdFastfood className='text-2xl text-gray-500' />
           <input
             type='text'
-            {...register("calories")}
-            placeholder='Calories'
+            {...register("description")}
+            placeholder='Description'
             className='w-full rounded-md border-b-2 bg-[#F9F8F5] p-2 text-orange-600 focus:outline-[#F0E4A9]'
           />
         </div>
 
         <div className='flex items-center justify-center'>
           <button
+            onClick={() => setValue("picture", imgUrl)}
             type='submit'
             className='rounded-md bg-green-400 px-4 py-2 font-bold text-white hover:bg-green-600'>
-            {progress ? `${progress}% Uploaded` : "Save Dish"}
+            Save Dish
           </button>
         </div>
       </form>
