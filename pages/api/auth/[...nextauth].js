@@ -3,6 +3,7 @@ import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import Users from "@/database/model/user";
 import { compare } from "bcrypt";
+import connectMongo from "@/database/connection";
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -39,7 +40,11 @@ export const authOptions = {
     }),
   ],
   pages: {
-    signIn: "/auth/singup",
+    signIn: "/auth/login"
+    
+  },
+  session: {
+    strategy:"jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

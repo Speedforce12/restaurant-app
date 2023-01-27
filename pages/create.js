@@ -169,7 +169,7 @@ const create = () => {
               ) : (
                 <>
                   <div className='relative h-full'>
-                    <img src={imgUrl} className='h-52  w-52 object-cover' />
+                    <img src={imgUrl} className='h-52  w-52 object-cover' alt="" />
 
                     <button
                       onClick={deleteImages}

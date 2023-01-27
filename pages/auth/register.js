@@ -5,6 +5,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { motion } from "framer-motion"
 import { useSession, signIn } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { createUser } from "@/lib/helpers";
+import { toast } from "react-hot-toast";
 
 const PASSWORD_REGEX =
   /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/;
@@ -29,6 +32,8 @@ const schema = yup.object({
 
 const register = () => {
 
+  const router = useRouter()
+
     const {
       register,
       handleSubmit,
@@ -36,41 +41,34 @@ const register = () => {
       setValue,
       reset,
     } = useForm({
-      mode: "all",
+      mode: "onBlur",
       resolver: yupResolver(schema),
     });
 
   
    const onSubmit = (data) => {
-  console.log(data);
+     const user = createUser(data)
+     if (user.data) {
+       toast.success("User created successfully")
+     }
+     router.push("/auth/login")
   };
-  
+
 
   return (
-    <div className='mx-auto flex h-screen  max-w-xl items-center p-5'>
+    <div className='mx-auto flex h-screen  md:mt-0  max-w-xl items-center p-5'>
       <div className='flex w-full flex-col items-center justify-center space-y-4 rounded-lg border-2 bg-white p-4 shadow-md'>
         <h2 className='text-2xl font-bold text-gray-700'>
           Nice to meet you! 🎊
         </h2>
 
         <form
-          className='mt-4 flex w-full flex-col items-center justify-center space-y-5'
+          className='mt-4 flex w-full flex-col items-center justify-center space-y-2'
           onSubmit={handleSubmit(onSubmit)}>
           <p className='text-sm font-normal text-gray-500'>
             Please fill out the fields
           </p>
-          <button
-            onClick={() => signIn("google")}
-            className='flex  items-center justify-center rounded-xl border border-gray-300 py-2 px-4  md:w-2/5'
-            type='button'>
-            <FcGoogle className='mr-2 text-xl' />
-            Log In with Google
-          </button>
-
-          <div class='flex w-3/5 items-center before:mt-0.5 before:flex-1 before:border-t before:border-gray-300 after:mt-0.5 after:flex-1 after:border-t after:border-gray-300'>
-            <p class='mx-4 mb-0 text-center font-semibold'>Or</p>
-          </div>
-
+  
           <div className='flex w-full flex-col space-y-4 p-5'>
             <div className='w-full'>
               <label

@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { FcGoogle } from "react-icons/fc";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-
+import { useRouter } from "next/router";
 
 const PASSWORD_REGEX =
   /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{6,}$/;
@@ -21,24 +21,37 @@ const schema = yup.object({
     .required("No password provided."),
 });
 
-
 const login = () => {
+  const router = useRouter()
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    mode: "onBlur",
+    resolver: yupResolver(schema),
+  });
 
-        const {
-          register,
-          handleSubmit,
-          formState: { errors },
-          setValue,
-          reset,
-        } = useForm({
-          mode: "all",
-          resolver: yupResolver(schema),
-        });
+  const onSubmit = async (data) => {
 
-        const onSubmit = (data) => {
-          console.log(data);
-    };
     
+    const res = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+      callbackUrl: "/",
+    })
+    
+    if (res.ok === true) {
+        router.push(res.url)
+      };
+  
+
+  }
+    
+      const handleGoogle = async () => {
+        signIn("google", { callbackUrl: "/" });
+      };
 
   return (
     <div className='mx-auto flex h-screen  max-w-xl items-center p-5'>
@@ -52,15 +65,15 @@ const login = () => {
             Please fill out the fields
           </p>
           <button
-            onClick={() => signIn("google")}
+            onClick={handleGoogle}
             className='flex  items-center justify-center rounded-xl border border-gray-300 py-2 px-4  md:w-2/5'
             type='button'>
             <FcGoogle className='mr-2 text-xl' />
             Log In with Google
           </button>
 
-          <div class='flex w-3/5 items-center before:mt-0.5 before:flex-1 before:border-t before:border-gray-300 after:mt-0.5 after:flex-1 after:border-t after:border-gray-300'>
-            <p class='mx-4 mb-0 text-center font-semibold'>Or</p>
+          <div className='flex w-3/5 items-center before:mt-0.5 before:flex-1 before:border-t before:border-gray-300 after:mt-0.5 after:flex-1 after:border-t after:border-gray-300'>
+            <p className='mx-4 mb-0 text-center font-semibold'>Or</p>
           </div>
 
           <div className='flex w-full flex-col space-y-4 p-5'>
@@ -100,7 +113,8 @@ const login = () => {
             </div>
           </div>
 
-          <motion.button
+          <motion.button 
+            type="submit"
             whileTap={{ scale: "0.85" }}
             transition={{ duration: "2" }}
             className='rounded-lg bg-yellow-200 px-4  py-2 text-lg font-extrabold capitalize text-yellow-800 drop-shadow-md'>
